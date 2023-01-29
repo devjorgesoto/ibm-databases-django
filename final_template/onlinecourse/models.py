@@ -103,15 +103,15 @@ class Enrollment(models.Model):
     # Other fields and methods you would like to design
 class Question(models.Model):
     # Has a One-To-Many (or Many-To-Many if you want to reuse questions) relationship with course
-    users = models.OneToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
 
     # Foreign key to lesson
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(Course, on_delete=models.CASCADE)
     
     #question content
-    question_content = models.CharField(max_length=5, choices=COURSE_MODES, default=AUDIT)
+    question_content = models.CharField(max_length=5)
     # question text
-    question_text= models.CharField(max_length=5, choices=COURSE_MODES, default=AUDIT)
+    question_text= models.CharField(max_length=5)
     
     # question grade/mark
     question_grade= models.IntegerField(default=0)
@@ -134,12 +134,12 @@ class Question(models.Model):
     # Choice content
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
- class Choice(models.Model):
+class Choice(models.Model):
     choice_content = models.CharField(max_length=200)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
 
     choice_result = models.BooleanField(default= False)
-    choice_options = model.CharField(max_length=100)
+    choice_options = models.CharField(max_length=100)
 
 # <HINT> The submission model
 # One enrollment could have multiple submission
@@ -147,4 +147,4 @@ class Question(models.Model):
 # One choice could belong to multiple submissions
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-    choices = models.ManyToManyField(Choice)
+    choices = models.ForeignKey(Choice, on_delete=models.CASCADE)
